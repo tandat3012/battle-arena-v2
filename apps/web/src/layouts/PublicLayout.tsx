@@ -13,9 +13,9 @@ const NAV = [
 
 export function Brand() {
   return (
-    <Link to="/" className="flex items-center gap-2.5" aria-label="Battle Arena V2 — trang chủ">
+    <Link to="/" className="flex items-center gap-2.5" aria-label="Battle Arena — trang chủ">
       <span className="grid size-9 place-items-center rounded-xl bg-accent text-accent-ink"><Swords className="size-5" aria-hidden /></span>
-      <span className="font-display text-lg font-bold text-head">Battle Arena <span className="text-accent">V2</span></span>
+      <span className="font-display text-lg font-bold text-head">Battle Arena</span>
     </Link>
   );
 }
@@ -62,7 +62,7 @@ export function PublicLayout() {
         <Outlet />
       </main>
       <footer className="border-t border-line py-6 text-center text-xs text-muted">
-        Battle Arena V2 · Dữ liệu đọc trực tiếp từ Redis V2 · Trạng thái online là <strong className="text-body">mô phỏng</strong>
+        Battle Arena · Dữ liệu đọc trực tiếp từ Redis V2 · Trạng thái online là <strong className="text-body">mô phỏng</strong>
       </footer>
     </div>
   );
