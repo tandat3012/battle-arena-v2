@@ -67,7 +67,7 @@ export default function History() {
     <>
       <PageHeader title="Lịch sử trận đấu" subtitle="Mới nhất trước. Trận đã ghi là bất biến, vẫn giữ khi người chơi bị vô hiệu hóa hoặc mùa đã đóng." />
       <Card className="mb-6">
-        <form className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-[auto_12rem_1fr] lg:items-end" onSubmit={(e) => { e.preventDefault(); setParam('player', playerInput.trim()); }}>
+        <form className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-[auto_12rem_1fr] lg:items-start" onSubmit={(e) => { e.preventDefault(); setParam('player', playerInput.trim()); }}>
           <Field label="Mùa giải" htmlFor="h-season">
             {seasons.data ? <SeasonSelect id="h-season" seasons={seasons.data.items} value={seasonId} onChange={(v) => setParam('season', v)} allowRecent /> : <Input id="h-season" disabled placeholder="Đang tải…" />}
           </Field>
