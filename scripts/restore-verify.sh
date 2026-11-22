@@ -2,12 +2,17 @@
 # Nạp RDB vào một Redis độc lập, không dùng hoặc xóa Docker volume, rồi so sánh
 # toàn bộ key/value ba:v2: bền vững với Redis V2 nguồn từ cùng thời điểm backup.
 # Dùng: scripts/restore-verify.sh [file.rdb] [--keep]
-# --keep giữ container và thư mục tạm để mở Redis restore ở 127.0.0.1:6381.
+# --keep giữ container và thư mục tạm để mở Redis restore ở 127.0.0.1:${RESTORE_PORT:-6381}.
 set -euo pipefail
 cd "$(dirname "$0")/.."
 
 RDB=""; KEEP=0
 for a in "$@"; do [ "$a" = "--keep" ] && KEEP=1 || RDB="$a"; done
+RESTORE_PORT="${RESTORE_PORT:-6381}"
+if ! [[ "$RESTORE_PORT" =~ ^[0-9]+$ ]] || [ "$RESTORE_PORT" -lt 1 ] || [ "$RESTORE_PORT" -gt 65535 ]; then
+  echo "RESTORE_PORT phải là một cổng từ 1 đến 65535." >&2
+  exit 1
+fi
 if [ -z "$RDB" ]; then
   RDB=$(find backups -maxdepth 1 -type f -name '*.rdb' -printf '%T@ %p\n' 2>/dev/null | sort -nr | head -1 | cut -d' ' -f2- || true)
 fi
@@ -39,7 +44,7 @@ mkdir -p "$DATA_DIR"
 cp "$RDB" "$DATA_DIR/dump.rdb"
 chmod 777 "$DATA_DIR"
 
-docker run -d --name "$NAME" --label "com.battlearena.restore-run=$WORK_DIR" -p 127.0.0.1:6381:6379 \
+docker run -d --name "$NAME" --label "com.battlearena.restore-run=$WORK_DIR" -p "127.0.0.1:${RESTORE_PORT}:6379" \
   -v "$DATA_DIR:/data" "$IMAGE" \
   redis-server --appendonly no --dir /data --dbfilename dump.rdb --save "" >/dev/null
 
@@ -185,7 +190,7 @@ search_all_active_ids() {
   printf '%s\n%s' "$total" "$ids"
 }
 
-echo "--- Kiểm tra instance restore 127.0.0.1:6381 và Redis V2 nguồn ---"
+echo "--- Kiểm tra instance restore 127.0.0.1:$RESTORE_PORT và Redis V2 nguồn ---"
 same_command "PING" PING
 same_redis_version
 same_command "Số người chơi" SCARD ba:v2:players
@@ -264,7 +269,7 @@ fi
   echo "## Lần kiểm tra $(date '+%Y-%m-%d %H:%M:%S %z')"
   echo ""
   echo "- File: \`$RDB\` (sha256 \`$(sha256sum "$RDB" | cut -d' ' -f1)\`)"
-  echo "- Instance restore: \`$IMAGE\`, thư mục tạm bind mount (không dùng Docker volume), \`appendonly no\`, cổng 127.0.0.1:6381"
+  echo "- Instance restore: \`$IMAGE\`, thư mục tạm bind mount (không dùng Docker volume), \`appendonly no\`, cổng 127.0.0.1:$RESTORE_PORT"
   echo "- Đối chiếu thực hiện với Redis V2 nguồn đang chạy; nguồn phải giữ nguyên từ lúc tạo backup đến hết kiểm tra. Session và bộ đếm đăng nhập có TTL được loại khỏi so sánh key/value. Giá trị được so theo cấu trúc Redis; hash/set/sorted set được chuẩn hóa thứ tự, list giữ nguyên thứ tự, stream so ID và toàn bộ field/value."
   echo "- Kết quả: **$PASS OK / $FAIL FAIL**"
   echo ""
@@ -276,7 +281,7 @@ fi
 echo "--- $PASS OK / $FAIL FAIL · đã ghi $REPORT ---"
 if [ "$KEEP" -eq 1 ]; then
   KEEP_INSTANCE=1
-  echo "Giữ container $NAME tại 127.0.0.1:6381"
+  echo "Giữ container $NAME tại 127.0.0.1:$RESTORE_PORT"
   echo "Thư mục dữ liệu tạm: $DATA_DIR"
   echo "Sau khi kiểm tra: docker rm -f $NAME; rm -rf -- '$WORK_DIR'"
 fi

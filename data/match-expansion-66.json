@@ -1,0 +1,644 @@
+{
+  "dataset": "Battle Arena V2 simulated dry-run match expansion",
+  "disclaimer": "Simulated matches for isolated restore-copy validation only; not real match history.",
+  "sourceBaseline": {
+    "backupFile": "backups/battle-arena-v2-20261122-150730.rdb",
+    "backupSha256": "c39ff85db68e1d10e393cf0a0f68e1ca5d38e81c3cf0aa5ff772032d390d9169",
+    "seasonId": "s2026_02",
+    "existingMatchCount": 34
+  },
+  "rankedWinDistribution": {
+    "strong": [
+      {
+        "playerId": "player05",
+        "addedRankedWins": 3
+      },
+      {
+        "playerId": "player07",
+        "addedRankedWins": 3
+      },
+      {
+        "playerId": "player09",
+        "addedRankedWins": 3
+      },
+      {
+        "playerId": "player10",
+        "addedRankedWins": 3
+      },
+      {
+        "playerId": "player11",
+        "addedRankedWins": 3
+      },
+      {
+        "playerId": "player19",
+        "addedRankedWins": 3
+      }
+    ],
+    "medium": [
+      {
+        "playerId": "player01",
+        "addedRankedWins": 2
+      },
+      {
+        "playerId": "player02",
+        "addedRankedWins": 2
+      },
+      {
+        "playerId": "player03",
+        "addedRankedWins": 2
+      },
+      {
+        "playerId": "player04",
+        "addedRankedWins": 2
+      },
+      {
+        "playerId": "player06",
+        "addedRankedWins": 2
+      },
+      {
+        "playerId": "player08",
+        "addedRankedWins": 2
+      },
+      {
+        "playerId": "player12",
+        "addedRankedWins": 2
+      },
+      {
+        "playerId": "player13",
+        "addedRankedWins": 2
+      },
+      {
+        "playerId": "player14",
+        "addedRankedWins": 2
+      },
+      {
+        "playerId": "player15",
+        "addedRankedWins": 2
+      },
+      {
+        "playerId": "player16",
+        "addedRankedWins": 2
+      }
+    ],
+    "low": [
+      {
+        "playerId": "player17",
+        "addedRankedWins": 1
+      },
+      {
+        "playerId": "player18",
+        "addedRankedWins": 1
+      },
+      {
+        "playerId": "player20",
+        "addedRankedWins": 1
+      },
+      {
+        "playerId": "player21",
+        "addedRankedWins": 1
+      },
+      {
+        "playerId": "player22",
+        "addedRankedWins": 1
+      },
+      {
+        "playerId": "player24",
+        "addedRankedWins": 1
+      }
+    ]
+  },
+  "friendlyWinDistribution": {
+    "distinctWinners": 20,
+    "zeroFriendlyWins": 3
+  },
+  "matches": [
+    {
+      "matchId": "49721776-42c8-4537-80b6-a8830d2e750e",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player13",
+      "player2Id": "player15",
+      "winnerId": "player15"
+    },
+    {
+      "matchId": "defc2444-1276-475c-a925-83f9b4aa2bd1",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player13",
+      "player2Id": "player18",
+      "winnerId": "player13"
+    },
+    {
+      "matchId": "16bf3722-7137-454e-ace3-9a3d91749891",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player09",
+      "player2Id": "player17",
+      "winnerId": "player09"
+    },
+    {
+      "matchId": "0f0e575d-76e9-4725-8518-f77ad2e26b3c",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player07",
+      "player2Id": "player10",
+      "winnerId": "player07"
+    },
+    {
+      "matchId": "a0051c35-a871-4aa7-bc1b-bda6835965ca",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player01",
+      "player2Id": "player22",
+      "winnerId": "player01"
+    },
+    {
+      "matchId": "8be90d95-97e8-4722-818f-e1dc987c84b1",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player19",
+      "player2Id": "player21",
+      "winnerId": "player19"
+    },
+    {
+      "matchId": "8d9b91a6-fd23-48c7-833c-4a6dbdc89a19",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player09",
+      "player2Id": "player18",
+      "winnerId": "player09"
+    },
+    {
+      "matchId": "31e4bdae-6ba9-410b-9320-6e498737b8a6",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player08",
+      "player2Id": "player15",
+      "winnerId": "player08"
+    },
+    {
+      "matchId": "95fec8bf-5b81-4b90-92a2-085d03d9c754",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player17",
+      "player2Id": "player18",
+      "winnerId": "player18"
+    },
+    {
+      "matchId": "6f632aa0-3732-4457-80c8-932399418c67",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player01",
+      "player2Id": "player18",
+      "winnerId": "player01"
+    },
+    {
+      "matchId": "9241d78c-d108-4d5f-a5f8-aefb0932aff7",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player01",
+      "player2Id": "player07",
+      "winnerId": "player07"
+    },
+    {
+      "matchId": "a91a9940-13a8-4658-b962-b5599da83f5e",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player05",
+      "player2Id": "player12",
+      "winnerId": "player05"
+    },
+    {
+      "matchId": "603b46f6-b401-48a9-9f4d-046e5e5ee8ca",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player02",
+      "player2Id": "player17",
+      "winnerId": "player17"
+    },
+    {
+      "matchId": "9dbe5f45-1ad2-4b38-ab0f-faf065c1ce0d",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player03",
+      "player2Id": "player14",
+      "winnerId": "player03"
+    },
+    {
+      "matchId": "51d89d97-fccf-4dac-840b-b7d95a9a8cc0",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player05",
+      "player2Id": "player21",
+      "winnerId": "player05"
+    },
+    {
+      "matchId": "14b54aaf-c6d1-4a77-8d9e-ca8a3e1ba881",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player13",
+      "player2Id": "player14",
+      "winnerId": "player14"
+    },
+    {
+      "matchId": "9112866c-b89b-41e2-9bf4-cf1477689fec",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player02",
+      "player2Id": "player15",
+      "winnerId": "player15"
+    },
+    {
+      "matchId": "90952ba9-e5f5-4e9a-b73a-ce844dba80d2",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player07",
+      "player2Id": "player24",
+      "winnerId": "player24"
+    },
+    {
+      "matchId": "4b8de221-ad45-460a-bce6-33605c5241ba",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player17",
+      "player2Id": "player21",
+      "winnerId": "player21"
+    },
+    {
+      "matchId": "9bdf89dc-78fa-48df-a48f-7de78b13281e",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player08",
+      "player2Id": "player20",
+      "winnerId": "player08"
+    },
+    {
+      "matchId": "1d732979-d7d1-409b-9370-e44679bfbb7a",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player03",
+      "player2Id": "player08",
+      "winnerId": "player03"
+    },
+    {
+      "matchId": "72f5c287-86a1-49f6-8ea9-68d3a93b0573",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player09",
+      "player2Id": "player24",
+      "winnerId": "player09"
+    },
+    {
+      "matchId": "f0d2be83-c4f3-42be-b994-67c311693f25",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player13",
+      "player2Id": "player21",
+      "winnerId": "player13"
+    },
+    {
+      "matchId": "25ee9b55-ca3a-492c-b533-60d061a579f1",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player12",
+      "player2Id": "player15",
+      "winnerId": "player12"
+    },
+    {
+      "matchId": "41ee6e10-a8aa-4907-b88c-bc1949be00e7",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player01",
+      "player2Id": "player16",
+      "winnerId": "player16"
+    },
+    {
+      "matchId": "e7364337-9634-46fa-9e06-8f0c2c3ec531",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player03",
+      "player2Id": "player22",
+      "winnerId": "player22"
+    },
+    {
+      "matchId": "c3728e87-5fa4-4cd8-aef5-eef79038b758",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player04",
+      "player2Id": "player11",
+      "winnerId": "player11"
+    },
+    {
+      "matchId": "5dc2dc37-c505-4542-9045-676a282608e6",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player06",
+      "player2Id": "player24",
+      "winnerId": "player06"
+    },
+    {
+      "matchId": "707587e5-9bb8-4e95-9459-8a0f691fbb76",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player10",
+      "player2Id": "player16",
+      "winnerId": "player10"
+    },
+    {
+      "matchId": "e1250a9c-a6ca-4bb6-ba22-df60fcfc1c76",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player14",
+      "player2Id": "player22",
+      "winnerId": "player14"
+    },
+    {
+      "matchId": "a8c5b83d-7eec-427d-b1ba-1fce119a2190",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player05",
+      "player2Id": "player14",
+      "winnerId": "player05"
+    },
+    {
+      "matchId": "ea9ff9f3-b124-4887-861a-b68bb87e871e",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player06",
+      "player2Id": "player11",
+      "winnerId": "player06"
+    },
+    {
+      "matchId": "7b4bec8c-94a6-4247-84cd-31f038d2d27f",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player09",
+      "player2Id": "player20",
+      "winnerId": "player20"
+    },
+    {
+      "matchId": "1b56adea-d876-4069-a8e8-67fdc4922c9a",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player03",
+      "player2Id": "player04",
+      "winnerId": "player04"
+    },
+    {
+      "matchId": "74227b31-2dd3-4c41-94e1-48f14476b911",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player19",
+      "player2Id": "player20",
+      "winnerId": "player19"
+    },
+    {
+      "matchId": "e1f01917-2db7-4634-9691-add1ce0ceeec",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player12",
+      "player2Id": "player22",
+      "winnerId": "player12"
+    },
+    {
+      "matchId": "824fc00e-0ba0-4918-9b1b-e542ca050bf1",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player11",
+      "player2Id": "player24",
+      "winnerId": "player11"
+    },
+    {
+      "matchId": "5851cbb4-96dc-4fe6-bb1b-10184c4ccfd9",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player07",
+      "player2Id": "player12",
+      "winnerId": "player07"
+    },
+    {
+      "matchId": "17913a46-2a77-438d-b518-8d499b9b78f1",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player05",
+      "player2Id": "player19",
+      "winnerId": "player19"
+    },
+    {
+      "matchId": "099c47b2-d3a3-46c5-bcdc-baf80edf74e2",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player02",
+      "player2Id": "player20",
+      "winnerId": "player02"
+    },
+    {
+      "matchId": "31bea17e-049f-4d6a-b80e-c6e9ffcb727b",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player04",
+      "player2Id": "player16",
+      "winnerId": "player16"
+    },
+    {
+      "matchId": "7dfeff78-fd1a-4be4-a782-2e25b9914d84",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player04",
+      "player2Id": "player06",
+      "winnerId": "player04"
+    },
+    {
+      "matchId": "c27533bd-1274-46eb-b72b-8c8252b54fd1",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player02",
+      "player2Id": "player16",
+      "winnerId": "player02"
+    },
+    {
+      "matchId": "ff0cd663-038e-4927-90cf-47a4443458a6",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player08",
+      "player2Id": "player10",
+      "winnerId": "player10"
+    },
+    {
+      "matchId": "8bc621e1-dbf8-4e77-82da-a59bca824d00",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player11",
+      "player2Id": "player19",
+      "winnerId": "player11"
+    },
+    {
+      "matchId": "ce589fe5-a31f-4654-88e6-a3407bd6f692",
+      "seasonId": "s2026_02",
+      "mode": "ranked_1v1",
+      "player1Id": "player06",
+      "player2Id": "player10",
+      "winnerId": "player10"
+    },
+    {
+      "matchId": "623c1150-2aa2-41ae-ad05-c4da30db366b",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player06",
+      "player2Id": "player17",
+      "winnerId": "player06"
+    },
+    {
+      "matchId": "da6d985e-049d-481a-b13b-ee48e582d817",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player10",
+      "player2Id": "player14",
+      "winnerId": "player14"
+    },
+    {
+      "matchId": "5d9fe4ef-52bf-44c6-b873-3baa0ac0ce25",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player02",
+      "player2Id": "player22",
+      "winnerId": "player02"
+    },
+    {
+      "matchId": "2b610614-4aad-420b-86cd-e933bee48378",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player13",
+      "player2Id": "player24",
+      "winnerId": "player13"
+    },
+    {
+      "matchId": "f20a28a7-4956-4414-bb3f-bc417f0ef668",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player01",
+      "player2Id": "player15",
+      "winnerId": "player01"
+    },
+    {
+      "matchId": "37e45e69-326a-4003-9ffd-31e2cc20d864",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player02",
+      "player2Id": "player19",
+      "winnerId": "player19"
+    },
+    {
+      "matchId": "3374c089-949d-4034-80b3-c4c7aaa962d3",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player12",
+      "player2Id": "player16",
+      "winnerId": "player12"
+    },
+    {
+      "matchId": "8f728c4c-a82a-47ac-b005-7a44e77113b7",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player01",
+      "player2Id": "player10",
+      "winnerId": "player10"
+    },
+    {
+      "matchId": "3ee61293-f967-4b28-af11-8a11c5473f96",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player07",
+      "player2Id": "player17",
+      "winnerId": "player17"
+    },
+    {
+      "matchId": "3ad7b4c7-1b30-40ae-95de-ebfb65a6aa69",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player07",
+      "player2Id": "player13",
+      "winnerId": "player07"
+    },
+    {
+      "matchId": "3e848fec-e2d9-4575-8d6f-45ed7f34d001",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player09",
+      "player2Id": "player12",
+      "winnerId": "player09"
+    },
+    {
+      "matchId": "72f9d61a-06c6-47a3-abf8-1cc0253dcc7e",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player09",
+      "player2Id": "player21",
+      "winnerId": "player21"
+    },
+    {
+      "matchId": "e298e6d7-4502-42bf-b01f-6c94a784aea6",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player04",
+      "player2Id": "player14",
+      "winnerId": "player04"
+    },
+    {
+      "matchId": "88045806-92fa-4155-b6f5-5c15cb18e091",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player15",
+      "player2Id": "player18",
+      "winnerId": "player18"
+    },
+    {
+      "matchId": "1952d6eb-f5c8-4856-af24-fd66fa34f6e3",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player03",
+      "player2Id": "player16",
+      "winnerId": "player16"
+    },
+    {
+      "matchId": "b8eafe85-8eb6-463d-89f0-a4b1322cf97e",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player05",
+      "player2Id": "player20",
+      "winnerId": "player20"
+    },
+    {
+      "matchId": "7cc48a99-45d0-4d15-821e-d1d3c9146576",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player04",
+      "player2Id": "player08",
+      "winnerId": "player08"
+    },
+    {
+      "matchId": "a15f707f-e86c-42cb-adb6-3f76ec78c32e",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player05",
+      "player2Id": "player06",
+      "winnerId": "player05"
+    },
+    {
+      "matchId": "7dd29fa5-6205-4939-afae-439f45c6ee22",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player03",
+      "player2Id": "player11",
+      "winnerId": "player03"
+    },
+    {
+      "matchId": "4859e1ea-2487-4fc9-9d33-988b436c3ed4",
+      "seasonId": "s2026_02",
+      "mode": "friendly_1v1",
+      "player1Id": "player08",
+      "player2Id": "player11",
+      "winnerId": "player11"
+    }
+  ]
+}
