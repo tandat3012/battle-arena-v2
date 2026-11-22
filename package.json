@@ -1,0 +1,15 @@
+{
+  "name": "battle-arena-v2",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm --parallel --filter api --filter web dev",
+    "build": "pnpm -r build",
+    "test": "pnpm --filter api test",
+    "typecheck": "pnpm -r typecheck",
+    "init-redis": "pnpm --filter api init-redis",
+    "seed": "pnpm --filter api seed",
+    "verify-redis": "pnpm --filter api verify-redis",
+    "admin-hash": "pnpm --filter api admin-hash"
+  }
+}

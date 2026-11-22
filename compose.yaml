@@ -1,0 +1,61 @@
+name: battle-arena-v2
+
+services:
+  redis-v2:
+    image: redis:8.8.4
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    volumes:
+      - ./infra/redis.conf:/usr/local/etc/redis/redis.conf:ro
+      - redis-v2-data:/data
+    ports:
+      - "127.0.0.1:${REDIS_HOST_PORT:-6380}:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redisinsight-v2:
+    image: redis/redisinsight:3.8.0
+    ports:
+      - "127.0.0.1:${REDISINSIGHT_HOST_PORT:-5541}:5540"
+    volumes:
+      - redisinsight-v2-data:/data
+    depends_on:
+      redis-v2:
+        condition: service_healthy
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    env_file: .env
+    environment:
+      REDIS_URL: redis://redis-v2:6379
+      PORT: "3000"
+      SEED_ON_START: "${SEED_ON_START:-true}"
+    ports:
+      - "127.0.0.1:${API_HOST_PORT:-3001}:3000"
+    depends_on:
+      redis-v2:
+        condition: service_healthy
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    ports:
+      - "127.0.0.1:${WEB_HOST_PORT:-5173}:80"
+    depends_on:
+      - api
+
+  # Redis riêng cho integration test — không volume, bị xóa sạch giữa các test.
+  redis-test:
+    image: redis:8.8.4
+    profiles: ["test"]
+    ports:
+      - "127.0.0.1:6390:6379"
+
+volumes:
+  redis-v2-data:
+  redisinsight-v2-data:

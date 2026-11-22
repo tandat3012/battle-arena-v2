@@ -1,0 +1,100 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-bg: #0f0e17;
+  --color-surface: #1c1b29;
+  --color-surface-2: #272639;
+  --color-surface-3: #31304a;
+  --color-line: #36354d;
+  --color-head: #fffffe;
+  --color-body: #b4b6c9;
+  --color-muted: #9a9cb3;
+  --color-accent: #ff8906;
+  --color-accent-ink: #0f0e17;
+  --color-secondary: #f25f4c;
+  --color-tertiary: #e53170;
+  --color-friendly: #2cb67d;
+  --color-gold: #ffd166;
+  --color-silver: #c9cbd9;
+  --color-bronze: #d08a4f;
+
+  --font-sans: 'Be Vietnam Pro', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Chakra Petch', 'Be Vietnam Pro', ui-sans-serif, sans-serif;
+  --font-mono: ui-monospace, 'JetBrains Mono', 'Cascadia Code', monospace;
+
+  /* Nâng cỡ chữ nhỏ: 12→13px, 14→15px để dễ đọc trên nền tối */
+  --text-xs: 0.8125rem;
+  --text-xs--line-height: 1.25rem;
+  --text-sm: 0.9375rem;
+  --text-sm--line-height: 1.5rem;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    @apply bg-bg font-sans text-body antialiased;
+    line-height: 1.6;
+    min-height: 100dvh;
+  }
+  h1, h2, h3 {
+    @apply font-display text-head;
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+  button:not(:disabled), a, [role='button'], select, summary {
+    cursor: pointer;
+  }
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Nền trang trí (tham khảo docs/ui-reference): vùng sáng mờ theo bảng màu + vòng tròn mảnh + lưới chấm.
+ * Cố định sau nội dung, không bắt sự kiện; card dùng nền đặc nên chữ không bị ảnh hưởng.
+ */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Các quầng sáng mờ: hồng góc phải trên, cam bên trái, đỏ cam phía dưới */
+body::before {
+  inset: -10%;
+  background:
+    radial-gradient(34rem 34rem at 86% 4%, rgb(229 49 112 / 0.38), transparent 65%),
+    radial-gradient(30rem 30rem at 6% 26%, rgb(255 137 6 / 0.26), transparent 65%),
+    radial-gradient(36rem 26rem at 62% 104%, rgb(242 95 76 / 0.22), transparent 70%);
+  filter: blur(48px);
+  animation: aurora-drift 26s ease-in-out infinite alternate;
+}
+
+/* Vòng tròn mảnh + lưới chấm mờ dần xuống dưới */
+body::after {
+  inset: 0;
+  background:
+    radial-gradient(circle at 86% 6%, transparent 0 15.9rem, rgb(255 137 6 / 0.14) 16rem, transparent 16.15rem),
+    radial-gradient(circle at 86% 6%, transparent 0 23.9rem, rgb(229 49 112 / 0.10) 24rem, transparent 24.15rem),
+    radial-gradient(circle at 4% 30%, transparent 0 11.9rem, rgb(255 137 6 / 0.10) 12rem, transparent 12.15rem),
+    radial-gradient(rgb(255 255 254 / 0.08) 1px, transparent 1.5px) 0 0 / 26px 26px;
+  mask-image: linear-gradient(to bottom, #000 0%, rgb(0 0 0 / 0.55) 45%, transparent 85%);
+}
+
+@keyframes aurora-drift {
+  from { transform: translate3d(0, 0, 0) scale(1); }
+  to { transform: translate3d(-3%, 2%, 0) scale(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
