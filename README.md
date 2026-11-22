@@ -31,15 +31,16 @@ Website minh họa cho đồ án **Dữ liệu NoSQL — Redis / Redis Insight**
 
 ## Chạy lần đầu
 
-Chuẩn bị hash Admin riêng trước khi khởi động:
+Cách chạy nhanh cho demo trên máy cá nhân:
 
 ```bash
-pnpm install
-pnpm admin-hash --write   # nhập mật khẩu riêng, tối thiểu 8 ký tự
+cp -n .env.example .env
 docker compose up --build -d
 ```
 
-Mở http://localhost:5173; username mặc định là `admin`, mật khẩu là mật khẩu nhóm đã nhập ở bước tạo hash. `.env.example` không chứa thông tin đăng nhập dùng chung; `.env` bị Git bỏ qua. `COOKIE_SECURE=false` chỉ phù hợp với demo HTTP trên máy cá nhân; đặt `COOKIE_SECURE=true` khi chạy qua HTTPS.
+Mở http://localhost:5173 và đăng nhập bằng `admin` / `admin123@`. Đây là tài khoản demo dùng cho localhost; các cổng trong Compose chỉ bind vào `127.0.0.1`. `.env` bị Git bỏ qua.
+
+Nếu muốn đặt mật khẩu riêng cho nhóm, chạy `pnpm install` rồi `pnpm admin-hash --write` trước khi khởi động API. Lệnh này thay hash trong `.env`. `COOKIE_SECURE=false` chỉ phù hợp với demo HTTP trên máy cá nhân; đặt `COOKIE_SECURE=true` khi chạy qua HTTPS.
 
 ### Cách 1 — Toàn bộ trong Docker (dùng khi demo)
 
