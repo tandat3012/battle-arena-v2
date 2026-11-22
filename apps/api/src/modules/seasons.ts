@@ -2,8 +2,7 @@ import { z } from 'zod';
 import { AppError, luaError } from '../http.js';
 import { ID_RE, k, NS } from '../keys.js';
 import { redis, runScript } from '../redis.js';
-import { logEvent, toInt } from './common.js';
-import { getGameConfig } from './game.js';
+import { toInt } from './common.js';
 import { publishChange } from './realtime.js';
 
 export type SeasonStatus = 'draft' | 'active' | 'closed';
@@ -74,23 +73,17 @@ export async function getSeason(id: string) {
 }
 
 export async function createSeason(input: z.infer<typeof seasonCreateSchema>, adminId: string, at = new Date()) {
-  // SADD là "cổng" nguyên tử: chỉ request thêm được ID mới tiếp tục ghi Hash.
-  if (!(await redis.sAdd(k.seasons, input.seasonId))) {
-    throw new AppError(409, 'SEASON_EXISTS', 'Mã mùa giải đã tồn tại.');
-  }
-  const { defaultRankedWinPoints } = await getGameConfig();
   const now = at.toISOString();
-  await redis.hSet(k.season(input.seasonId), {
-    id: input.seasonId,
-    name: input.name,
-    status: 'draft',
-    rankedWinPoints: String(defaultRankedWinPoints),
-    createdAt: now,
-    startedAt: '',
-    closedAt: '',
-    updatedAt: now,
-  });
-  await logEvent('season.created', adminId, input.seasonId, `Tạo mùa ${input.name} (draft)`, { rankedWinPoints: defaultRankedWinPoints });
+  const [status, code] = await runScript(
+    'season-create',
+    [k.seasons, k.season(input.seasonId), k.config, k.events],
+    [input.seasonId, input.name, now, adminId],
+  );
+  if (status !== 'OK') {
+    if (code === 'SEASON_EXISTS')
+      throw new AppError(409, 'SEASON_EXISTS', 'Mã mùa giải đã tồn tại.');
+    throw luaError(code);
+  }
   return getSeason(input.seasonId);
 }
 

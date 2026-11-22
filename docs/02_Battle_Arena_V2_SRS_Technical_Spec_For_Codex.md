@@ -337,7 +337,7 @@ Trả JSON, ngoại trừ SSE và health endpoint nếu cần. Không trả raw 
 | GET | `/api/auth/me` | cookie | `{authenticated:true,admin:{id,username}}` hoặc 401 |
 | POST | `/api/auth/logout` | cookie | Xóa session Redis, clear cookie; idempotent |
 
-- Cookie `HttpOnly`, `SameSite=Lax`, `Secure=true` trên HTTPS; local HTTP chỉ `Secure=false` theo `.env`. Trong production cấu hình reverse proxy đúng và có CSRF protection thích hợp cho các route ghi; tối thiểu validate Origin và dùng anti-CSRF token hoặc giải pháp tương đương khi có cookie.
+- Cookie `HttpOnly`, `SameSite=Lax`, `Secure=true` trên HTTPS; local HTTP chỉ `Secure=false` theo `.env`. Route ghi từ chối Origin không có trong `APP_ORIGIN`; nếu client không gửi Origin, chỉ chấp nhận `Sec-Fetch-Site: same-origin`. Cấu hình reverse proxy đúng; không dùng wildcard origin.
 - Dùng token crypto random >= 32 bytes, **chỉ lưu SHA-256 digest làm phần tên Redis key**, không ghi raw token vào log, Redis Insight screenshots hay Admin Overview.
 - Trên login thất bại `INCR` attempts key theo digest IP/username và `EXPIRE` (counter có TTL); ngưỡng gợi ý 5 lần/15 phút, trả `429`; rate limit cả ở endpoint login. Không tạo account mặc định mật khẩu công khai.
 
@@ -697,7 +697,7 @@ Báo cáo giữa kỳ có 13 mục Chương 3; giữ các mục đó, nhưng th�
 
 - Redis V2 dùng volume riêng. Cấu hình **AOF** để giảm rủi ro mất dữ liệu giữa các snapshot và hỗ trợ **RDB** để xuất file backup cho đồ án.
 - `scripts/backup.sh`: xác nhận đang kết nối instance **V2**, gọi `BGSAVE`, **đợi thành công** bằng `INFO persistence` / timestamp `LASTSAVE` thay vì copy trước khi hoàn tất, copy đúng tệp `dump.rdb` từ volume/container ra `backups/` cùng timestamp và checksum.
-- `scripts/restore-verify.sh`: dựng một Redis **độc lập**, data dir/volume trống, chép RDB vào khi instance chưa chạy; đảm bảo bản restore không tự load AOF cũ làm ghi đè snapshot; khởi động Redis và truy vấn các dữ liệu mẫu. Dùng port host thử nghiệm khác (gợi ý `127.0.0.1:6381`) nếu cần mở ARDM/CLI.
+- `scripts/restore-verify.sh`: dựng Redis **độc lập** với thư mục tạm bind mount, không sử dụng hay xóa Docker volume; chép RDB vào trước khi khởi động, tắt AOF để không ghi đè snapshot, rồi so khớp tập key và giá trị serialize của toàn bộ key `ba:v2:` bền vững với Redis V2 nguồn đang chạy. Bỏ qua session và login counter có TTL; yêu cầu không ghi dữ liệu vào nguồn trong khi so sánh. Dùng `127.0.0.1:6381` nếu cần mở ARDM/CLI.
 - Redis Search metadata/index sau restore phải **được kiểm tra thực tế**; nếu chưa có index thì áp dụng `init-redis` idempotent rồi kiểm tra `FT.SEARCH`. Không mặc định mọi metadata được nạp như nhau trên mọi image/phiên bản.
 - Không sửa, reset hoặc nạp restore lên Redis V1; không dùng dữ liệu của Redis V1 làm backup V2.
 

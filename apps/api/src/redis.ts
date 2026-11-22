@@ -37,7 +37,9 @@ attachRedisLogging("subscriber", subscriber);
 // ---- Lua scripts: ----
 const SCRIPT_NAMES = [
   "match-record",
+  "login-attempt",
   "player-create",
+  "season-create",
   "season-activate",
   "season-close",
   "season-set-points",

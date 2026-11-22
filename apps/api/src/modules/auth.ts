@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { config } from '../config.js';
 import { AppError } from '../http.js';
 import { k } from '../keys.js';
-import { redis } from '../redis.js';
+import { redis, runScript } from '../redis.js';
 
 export const COOKIE_NAME = 'ba_session';
 const MAX_ATTEMPTS = 5;
@@ -36,8 +36,12 @@ export async function login(username: string, password: string, ip: string) {
   // So sánh hash luôn chạy kể cả khi sai username để không lộ username hợp lệ qua thời gian phản hồi.
   const passOk = await bcrypt.compare(password, config.adminPasswordHash);
   if (!passOk || username !== config.adminUsername) {
-    // Counter có TTL: INCR + EXPIRE NX (chỉ đặt TTL ở lần sai đầu tiên của cửa sổ)
-    await redis.multi().incr(attemptsKey).expire(attemptsKey, ATTEMPT_WINDOW_SECONDS, 'NX').exec();
+    // Check và INCR trong cùng Lua script để request song song không vượt ngưỡng.
+    const [status, ttl] = await runScript('login-attempt', [attemptsKey], [MAX_ATTEMPTS, ATTEMPT_WINDOW_SECONDS]);
+    if (status === 'LIMIT') {
+      const retryAfterSeconds = Math.max(Number(ttl), 1);
+      throw new AppError(429, 'TOO_MANY_ATTEMPTS', `Đăng nhập sai quá nhiều lần. Thử lại sau ${Math.ceil(retryAfterSeconds / 60)} phút.`, { retryAfterSeconds });
+    }
     throw new AppError(401, 'INVALID_CREDENTIALS', 'Sai tên đăng nhập hoặc mật khẩu.');
   }
   await redis.del(attemptsKey);
@@ -64,11 +68,17 @@ export const requireAdmin: RequestHandler = async (req, res, next) => {
   next();
 };
 
-/** Chống CSRF tối thiểu cho route ghi dùng cookie: Origin (nếu có) phải thuộc danh sách cho phép. */
+/** Chỉ cho phép request ghi từ origin của ứng dụng; same-origin Fetch Metadata là fallback cho client thiếu Origin. */
 export const checkOrigin: RequestHandler = (req, _res, next) => {
   if (['GET', 'HEAD', 'OPTIONS'].includes(req.method)) return next();
   const origin = req.get('origin');
-  if (origin && !config.allowedOrigins.includes(origin)) {
+  if (origin) {
+    if (!config.allowedOrigins.includes(origin)) {
+      throw new AppError(403, 'FORBIDDEN_ORIGIN', 'Origin không được phép.');
+    }
+    return next();
+  }
+  if (req.get('sec-fetch-site') !== 'same-origin') {
     throw new AppError(403, 'FORBIDDEN_ORIGIN', 'Origin không được phép.');
   }
   next();

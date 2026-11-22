@@ -5,7 +5,7 @@ Website minh họa cho đồ án **Dữ liệu NoSQL — Redis / Redis Insight**
 - Nghiệp vụ: [`docs/01_Battle_Arena_V2_De_Tai_Yeu_Cau_Va_Dinh_Huong_Redis.md`](docs/01_Battle_Arena_V2_De_Tai_Yeu_Cau_Va_Dinh_Huong_Redis.md)
 - Đặc tả kỹ thuật (key schema, API, test): [`docs/02_Battle_Arena_V2_SRS_Technical_Spec_For_Codex.md`](docs/02_Battle_Arena_V2_SRS_Technical_Spec_For_Codex.md)
 - Kịch bản demo + lệnh Redis Insight/ARDM: [`docs/demo-script.md`](docs/demo-script.md)
-- Kết quả restore thật: [`docs/restore-verification.md`](docs/restore-verification.md)
+- Bằng chứng restore lịch sử (cần chạy lại verifier mới): [`docs/restore-verification.md`](docs/restore-verification.md)
 
 ## Phiên bản đã chạy thật
 
@@ -31,15 +31,15 @@ Website minh họa cho đồ án **Dữ liệu NoSQL — Redis / Redis Insight**
 
 ## Chạy lần đầu
 
-Chỉ cần Docker:
+Chuẩn bị hash Admin riêng trước khi khởi động:
 
 ```bash
-cp .env.example .env && docker compose up --build -d
+pnpm install
+pnpm admin-hash --write   # nhập mật khẩu riêng, tối thiểu 8 ký tự
+docker compose up --build -d
 ```
 
-Mở http://localhost:5173 (Admin: `admin` / `admin123@`).
-
-`.env.example` có sẵn hash cho mật khẩu demo `admin123@` (username `admin`) để nhóm chạy được ngay. Đổi mật khẩu: `pnpm install && pnpm admin-hash --write`.
+Mở http://localhost:5173; username mặc định là `admin`, mật khẩu là mật khẩu nhóm đã nhập ở bước tạo hash. `.env.example` không chứa thông tin đăng nhập dùng chung; `.env` bị Git bỏ qua. `COOKIE_SECURE=false` chỉ phù hợp với demo HTTP trên máy cá nhân; đặt `COOKIE_SECURE=true` khi chạy qua HTTPS.
 
 ### Cách 1 — Toàn bộ trong Docker (dùng khi demo)
 
@@ -48,6 +48,7 @@ docker compose up --build -d
 ```
 
 API tự chạy seed idempotent khi khởi động (`SEED_ON_START=true`): lần đầu tạo dữ liệu mẫu, các lần sau thấy marker `ba:v2:seed:version` thì bỏ qua. Không bao giờ `FLUSHDB`.
+Nếu seed lỗi, container API dừng khởi động và Docker hiển thị lỗi; hãy xử lý nguyên nhân thay vì coi hệ thống đã sẵn sàng.
 
 ### Cách 2 — Dev (hot reload)
 
@@ -79,13 +80,13 @@ docker compose --profile test up -d redis-test
 pnpm test
 ```
 
-28 integration test (API + trạng thái Redis), chạy thật ngày 18/11/2026: **28/28 pass**. Test từ chối chạy nếu URL không phải Redis test cổng 6390.
+Kết quả lịch sử ngày 18/11/2026: **28/28 integration test pass**. Sau các sửa đổi, suite chạy ngày 22/11/2026: **33/33 pass** trên Redis test riêng ở cổng `6390`. Test từ chối chạy nếu `NODE_ENV` không phải `test` hoặc URL không chứa cổng `6390`; Compose định nghĩa Redis test riêng, không dùng chung volume với Redis V2.
 
 | Nhóm | Test (mã theo SRS mục 10) |
 |---|---|
-| Auth | T02 cookie HttpOnly + session TTL, T03 rate-limit 429, T04 không cookie → 401, T05 logout, chặn Origin lạ |
+| Auth | T02 cookie HttpOnly + session TTL, T03 rate-limit 429 + race song song, T04 không cookie → 401, T05 logout, chặn Origin lạ/request thiếu metadata |
 | Người chơi | T07 tạo (Hash + Set + mùa active 0 điểm), T08 trùng ID, T09 sửa + Search index, T10 không sửa được điểm, T11/T12 vô hiệu hóa/kích hoạt lại |
-| Mùa giải | T13/T14 draft → active (đóng mùa cũ, bảng mới 0 điểm), T15/T23 đóng mùa → chặn ghi trận, T16 bảng cũ giữ nguyên, cấm ID `active` |
+| Mùa giải | Tạo mùa nguyên tử (Set + Hash + Stream, test key sai kiểu và 10 request đồng thời), T13/T14 draft → active (đóng mùa cũ, bảng mới 0 điểm), T15/T23 đóng mùa → chặn ghi trận, T16 bảng cũ giữ nguyên, cấm ID `active` |
 | Trận đấu | T17 Ranked, T18 Friendly, T19 retry giống hệt, T20 trùng ID khác winner → 409, T21 người chơi sai, T22 mode tắt, T24 đua với đóng mùa, T25 10 request đồng thời, đổi điểm chỉ áp dụng trận sau |
 | Khác | T26/T27 hạng + đồng điểm, T28 FT.SEARCH, T29 cửa sổ online, T30 Stream, T34 che key session, T37 seed idempotent |
 
@@ -94,12 +95,12 @@ Kiểm tra thủ công bằng trình duyệt (headless Brave, 18/11/2026): 11 ro
 ## Backup / Restore
 
 ```bash
-scripts/backup.sh                 # BGSAVE → đợi LASTSAVE đổi → copy dump.rdb ra backups/ + .sha256 + .txt
-scripts/restore-verify.sh         # nạp RDB mới nhất vào Redis độc lập (volume trống, appendonly no) và đối chiếu
-scripts/restore-verify.sh --keep  # giữ instance ở 127.0.0.1:6381 để mở bằng ARDM/Redis Insight
+scripts/backup.sh                 # BGSAVE → copy dump.rdb ra backups/ + .sha256 + .txt
+scripts/restore-verify.sh         # nạp RDB vào thư mục tạm/container độc lập, so sánh giá trị các key ba:v2: với nguồn
+scripts/restore-verify.sh --keep  # giữ container restore ở 127.0.0.1:6381 để mở bằng ARDM/Redis Insight
 ```
 
-Redis V2 bật cả AOF (`appendfsync everysec`) và RDB (`infra/redis.conf`). Restore tự ghi kết quả vào `docs/restore-verification.md`.
+Redis V2 bật cả AOF (`appendfsync everysec`) và RDB (`infra/redis.conf`). Restore không dùng/xóa Docker volume; script tạo thư mục tạm riêng và chỉ dọn container/thư mục do chính lần chạy đó tạo. Đối chiếu giá trị cần Redis V2 nguồn giữ nguyên từ lúc tạo backup đến hết quá trình so sánh; nếu dữ liệu đã đổi, mismatch là điều dự kiến. File backup bị Git bỏ qua; giữ và nộp riêng theo yêu cầu môn học. Lịch sử 14/0 trong `docs/restore-verification.md` được tạo bởi bản script cũ, chỉ kiểm tra nhiều kết quả không rỗng, nên chưa chứng minh toàn bộ giá trị đã khôi phục.
 
 ## Cấu trúc
 
@@ -107,7 +108,7 @@ Redis V2 bật cả AOF (`appendfsync everysec`) và RDB (`infra/redis.conf`). R
 compose.yaml, .env.example, infra/redis.conf
 apps/api/
   src/keys.ts            tên key Redis (nguồn sự thật, SRS 5.2)
-  src/lua/*.lua          match-record, player-create, season-activate, season-close, season-set-points
+  src/lua/*.lua          match-record, login-attempt, player-create, season-create, season-activate, season-close, season-set-points
   src/modules/           players, seasons, matches, leaderboard, online, auth, game, realtime (Pub/Sub→SSE), admin-overview
   src/routes/            public, auth, admin
   scripts/               init-redis, seed (+ seed-data), verify-redis, create-admin-hash

@@ -5,11 +5,13 @@ Theo SRS mục 15. Chỉ ghi vào báo cáo những bước đã chạy thật v
 ## 0. Chuẩn bị (≈2 phút)
 
 ```bash
+pnpm install
+pnpm admin-hash --write          # tạo mật khẩu riêng; không dùng mật khẩu công khai trong tài liệu
 docker compose up --build -d
 curl -s localhost:3001/api/health/ready   # ready:true, searchIndex:true, pubsub:true
 ```
 
-Mở 3 cửa sổ: Web `http://localhost:5173`, Redis Insight `http://localhost:5541`, ARDM (kết nối `127.0.0.1:6380`).
+Mở 3 cửa sổ: Web `http://localhost:5173`, Redis Insight `http://localhost:5541`, ARDM (kết nối `127.0.0.1:6380`). Đăng nhập Admin bằng `admin` và mật khẩu nhóm vừa thiết lập. `COOKIE_SECURE=false` chỉ dùng cho localhost HTTP; HTTPS cần bật `COOKIE_SECURE=true`.
 
 Redis Insight → **Add database** → Host `redis-v2`, Port `6379`, DB 0 (Insight chạy trong cùng network Docker).
 
@@ -78,7 +80,7 @@ Search, phân tích bộ nhớ, profiler, import/export: ghi `Đã kiểm tra` /
 
 ```bash
 scripts/backup.sh
-scripts/restore-verify.sh --keep    # instance độc lập ở 127.0.0.1:6381
+scripts/restore-verify.sh --keep    # instance độc lập ở 127.0.0.1:6381, so khớp giá trị key với nguồn
 ```
 
-Mở `127.0.0.1:6381` bằng ARDM/Insight để chụp ảnh dữ liệu sau restore; kết quả đối chiếu nằm trong `docs/restore-verification.md`. Dừng: `docker rm -f ba-v2-restore && docker volume rm ba-v2-restore-data`.
+Để đối chiếu đúng, Redis V2 nguồn phải giữ nguyên dữ liệu từ lúc tạo backup đến hết quá trình so sánh; mismatch sau khi nguồn thay đổi là điều dự kiến. Mở `127.0.0.1:6381` bằng ARDM/Insight để chụp ảnh dữ liệu sau restore; script ghi kết quả vào `docs/restore-verification.md`. Với `--keep`, xem container và thư mục tạm được in ở cuối output; sau khi chụp xong, dừng đúng container restore bằng `docker rm -f <tên-container-được-in-ra>` rồi xóa đúng thư mục tạm mà script in ra. Không xóa volume Redis V2.

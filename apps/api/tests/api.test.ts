@@ -15,17 +15,18 @@ import { closeRedis, connectRedis, redis } from '../src/redis.js';
 import { seed } from '../scripts/seed.js';
 
 const PASSWORD = 'test-password-123';
+const APP_ORIGIN = 'http://localhost:5173';
 const app = createApp();
 let cookie: string;
 
 const admin = () => ({
-  post: (url: string, body?: object) => request(app).post(url).set('Cookie', cookie).send(body ?? {}),
-  patch: (url: string, body: object) => request(app).patch(url).set('Cookie', cookie).send(body),
+  post: (url: string, body?: object) => request(app).post(url).set('Cookie', cookie).set('Origin', APP_ORIGIN).send(body ?? {}),
+  patch: (url: string, body: object) => request(app).patch(url).set('Cookie', cookie).set('Origin', APP_ORIGIN).send(body),
   get: (url: string) => request(app).get(url).set('Cookie', cookie),
 });
 
 async function login() {
-  const res = await request(app).post('/api/auth/login').send({ username: 'admin', password: PASSWORD });
+  const res = await request(app).post('/api/auth/login').set('Origin', APP_ORIGIN).send({ username: 'admin', password: PASSWORD });
   expect(res.status).toBe(200);
   return String(res.headers['set-cookie'][0]).split(';')[0];
 }
@@ -67,7 +68,7 @@ beforeEach(async () => {
 
 describe('auth', () => {
   it('T02 login sets HttpOnly cookie and session String with TTL', async () => {
-    const res = await request(app).post('/api/auth/login').send({ username: 'admin', password: PASSWORD });
+    const res = await request(app).post('/api/auth/login').set('Origin', APP_ORIGIN).send({ username: 'admin', password: PASSWORD });
     expect(res.headers['set-cookie'][0]).toMatch(/HttpOnly/);
     const token = String(res.headers['set-cookie'][0]).split(';')[0].split('=')[1];
     const key = k.session(createHash('sha256').update(decodeURIComponent(token)).digest('hex'));
@@ -77,16 +78,40 @@ describe('auth', () => {
   it('T03 wrong password 5 times → 429, no session created', async () => {
     const before = (await redis.keys(`${k.session('')}*`)).length;
     for (let i = 0; i < 5; i++) {
-      await request(app).post('/api/auth/login').send({ username: 'admin', password: 'wrong' }).expect(401);
+      await request(app).post('/api/auth/login').set('Origin', APP_ORIGIN).send({ username: 'admin', password: 'wrong' }).expect(401);
     }
-    await request(app).post('/api/auth/login').send({ username: 'admin', password: PASSWORD }).expect(429);
+    await request(app).post('/api/auth/login').set('Origin', APP_ORIGIN).send({ username: 'admin', password: PASSWORD }).expect(429);
     expect((await redis.keys(`${k.session('')}*`)).length).toBe(before);
   });
 
+  it('concurrent failed logins are capped atomically at five attempts', async () => {
+    const responses = await Promise.all(Array.from({ length: 10 }, () =>
+      request(app).post('/api/auth/login').set('Origin', APP_ORIGIN).send({ username: 'admin', password: 'wrong' }),
+    ));
+    expect(responses.filter((res) => res.status === 401)).toHaveLength(5);
+    expect(responses.filter((res) => res.status === 429)).toHaveLength(5);
+    const keys = await redis.keys(`${k.loginAttempts('')}*`);
+    expect(keys).toHaveLength(1);
+    expect(await redis.get(keys[0]!)).toBe('5');
+    expect(await redis.ttl(keys[0]!)).toBeGreaterThan(0);
+  });
+
   it('T04 write without cookie → 401 and Redis unchanged', async () => {
-    const res = await request(app).post('/api/admin/players').send({ playerId: 'p_x', displayName: 'X X', country: 'VN', level: 1 });
+    const res = await request(app).post('/api/admin/players').set('Origin', APP_ORIGIN).send({ playerId: 'p_x', displayName: 'X X', country: 'VN', level: 1 });
     expect(res.status).toBe(401);
     expect(await redis.sIsMember(k.players, 'p_x')).toBe(0);
+  });
+
+  it('rejects cookie-authenticated writes without Origin or same-origin Fetch Metadata', async () => {
+    const res = await request(app).post('/api/admin/players').set('Cookie', cookie).send({ playerId: 'p_csrf', displayName: 'CSRF Test', country: 'VN', level: 1 });
+    expect(res.status).toBe(403);
+    expect(await redis.sIsMember(k.players, 'p_csrf')).toBe(0);
+  });
+
+  it('allows same-origin Fetch Metadata when Origin is absent', async () => {
+    await request(app).post('/api/admin/players').set('Cookie', cookie).set('Sec-Fetch-Site', 'same-origin')
+      .send({ playerId: 'p_fetch', displayName: 'Fetch Test', country: 'VN', level: 1 }).expect(201);
+    expect(await redis.sIsMember(k.players, 'p_fetch')).toBe(1);
   });
 
   it('T05 logout deletes session; next admin call 401', async () => {
@@ -165,6 +190,28 @@ describe('seasons', () => {
 
   it('rejects reserved seasonId "active"', async () => {
     await admin().post('/api/admin/seasons', { seasonId: 'active', name: 'Bad' }).expect(400);
+  });
+
+  it('season creation validates all Redis key types before writing any season data', async () => {
+    await redis.del(k.events);
+    await redis.set(k.events, 'wrong-type');
+    const response = await admin().post('/api/admin/seasons', { seasonId: 's_atomic', name: 'Atomic Test' }).expect(500);
+    expect(response.body.error.code).toBe('WRONG_KEY_TYPE');
+    expect(await redis.sIsMember(k.seasons, 's_atomic')).toBe(0);
+    expect(await redis.exists(k.season('s_atomic'))).toBe(0);
+    expect(await redis.get(k.events)).toBe('wrong-type');
+  });
+
+  it('concurrent requests for the same season create exactly one Set/Hash/Stream entry', async () => {
+    const eventsBefore = await redis.xLen(k.events);
+    const responses = await Promise.all(Array.from({ length: 10 }, () =>
+      admin().post('/api/admin/seasons', { seasonId: 's_concurrent', name: 'Concurrent Season' }),
+    ));
+    expect(responses.filter((res) => res.status === 201)).toHaveLength(1);
+    expect(responses.filter((res) => res.status === 409)).toHaveLength(9);
+    expect(await redis.sIsMember(k.seasons, 's_concurrent')).toBe(1);
+    expect(await redis.hGet(k.season('s_concurrent'), 'status')).toBe('draft');
+    expect(await redis.xLen(k.events)).toBe(eventsBefore + 1);
   });
 });
 

@@ -1,11 +1,13 @@
 # Kết quả kiểm tra phục hồi (restore) — Redis V2
 
-File này do `scripts/restore-verify.sh` tự ghi thêm sau mỗi lần chạy. Không chỉnh tay kết quả.
+Các kết quả chạy mới được `scripts/restore-verify.sh` tự ghi thêm ở cuối file; phần ghi chú đầu file giải thích giới hạn của lần chạy lịch sử.
+
+> **Lưu ý về bằng chứng cũ:** lần kiểm tra bên dưới (18/11/2026) chạy bản script chỉ xác nhận nhiều lệnh trả về dữ liệu không rỗng và so khớp một số lượng tổng. `14 OK / 0 FAIL` không chứng minh toàn bộ giá trị đã khôi phục chính xác. Seed định nghĩa 34 trận; snapshot lịch sử ghi nhận 35 trận, nên snapshot không khớp nguyên trạng seed. Tài liệu hiện có không xác định nguyên nhân chênh lệch. Chưa có kết quả chạy lại bằng bản script so sánh toàn bộ key/value ở thời điểm sửa tài liệu này.
 
 ## Lần kiểm tra 2026-11-18 12:22:46 +0700
 
 - File: `backups/battle-arena-v2-20261118-122115.rdb` (sha256 `d715df149d111401…`)
-- Instance restore: `redis:8.8.4`, volume trống `ba-v2-restore-data`, `appendonly no`, cổng 127.0.0.1:6381
+- Instance restore: `redis:8.8.4`, volume Docker trống `ba-v2-restore-data`, `appendonly no`, cổng 127.0.0.1:6381 (cách cũ; bản script mới dùng thư mục tạm riêng và không xóa Docker volume)
 - Kết quả: **14 OK / 0 FAIL**
 
 | Trạng thái | Lệnh | Kết quả trên restore | Redis V2 gốc lúc kiểm tra |
